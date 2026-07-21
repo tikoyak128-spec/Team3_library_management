@@ -1,0 +1,96 @@
+:root {
+    --purple-primary: #6F2CFF;
+    --purple-light: #F4EFFF;
+    --bg-light: #F8F9FD;
+    --text-dark: #1A1D23;
+    --text-muted: #8A92A6;
+    --white: #FFFFFF;
+}
+
+* {
+    margin: 0; padding: 0; box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body { background-color: var(--bg-light); color: var(--text-dark); }
+
+/* Main Wrapper Grid */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Sidebar Layout */
+.sidebar {
+    width: 260px;
+    background-color: var(--purple-primary);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    justify-content: space-between;
+}
+.sidebar-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; }
+.sidebar-menu ul { list-style: none; }
+.sidebar-menu li { margin-bottom: 8px; }
+.sidebar-menu a {
+    display: flex; align-items: center; gap: 15px;
+    color: rgba(255,255,255,0.7); text-decoration: none;
+    padding: 12px 16px; border-radius: 20px; transition: 0.2s;
+}
+.sidebar-menu li.active a, .sidebar-menu a:hover {
+    background-color: var(--white); color: var(--purple-primary);
+    font-weight: 600;
+}
+
+/* Promo Card */
+.sidebar-promo {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 16px; padding: 16px; text-align: center; margin: 20px 0;
+}
+.btn-upgrade {
+    background: var(--white); color: var(--purple-primary); border: none;
+    padding: 8px 16px; border-radius: 8px; font-weight: 600; margin-top: 10px; cursor: pointer;
+}
+
+/* Sidebar Footer Profile */
+.sidebar-footer { border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px; }
+.user-info { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.avatar-sm { width: 36px; height: 36px; border-radius: 50%; }
+.btn-logout {
+    background: var(--white); color: var(--purple-primary);
+    display: block; text-align: center; text-decoration: none;
+    padding: 8px; border-radius: 8px; font-weight: 600;
+}
+
+/* Main Display Layout Window */
+.main-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Top Navigation Bar */
+.navbar {
+    height: 70px; background: var(--white);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 30px; border-bottom: 1px solid #E9ECEF;
+}
+.navbar-search {
+    position: relative; width: 300px;
+}
+.navbar-search input {
+    width: 100%; padding: 8px 12px 8px 35px;
+    background: #F8F9FD; border: none; border-radius: 8px;
+}
+.navbar-search .search-icon { position: absolute; left: 12px; top: 11px; color: var(--text-muted); }
+.avatar-circle { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+
+/* Main Content Wrapper Container */
+.content-viewport {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
