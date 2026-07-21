@@ -42,5 +42,5 @@ if ($borrow_id > 0) {
     $_SESSION['flash_type'] = 'danger';
 }
 
-header("Location: index.php");
+header("Location: ../Borrow/index.php");
 exit;

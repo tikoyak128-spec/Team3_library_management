@@ -1,6 +1,8 @@
+<?php include '../includes/header.php'; ?>
+
 <?php
-define('BASE_URL', '..');
-include '../includes/header.php';
+define('BASE_PATH', dirname(__DIR__));
+require_once BASE_PATH . '/Database/db.php';
 ?>
 
 <style>
@@ -75,38 +77,19 @@ include '../includes/header.php';
 </style>
 
 <div class="container-fluid py-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="page-title">Add Author</h2>
-
-        <a href="index.php" class="btn btn-light shadow-sm">
-            Back to Authors
-        </a>
-    </div>
-
     <div class="row justify-content-center">
 
         <div class="col-md-8 col-lg-6">
-
             <div class="card author-card">
-
                 <div class="card-header-custom d-flex align-items-center">
-
-                    <div class="icon-circle me-3">
-                        ✍️
-                    </div>
-
                     <div>
-                        <h4 class="mb-0">New Author</h4>
+                        <h4 class="mb-0">Add New Author</h4>
                         <small>Add a new author to the library system</small>
                     </div>
-
                 </div>
 
                 <div class="card-body p-4">
-
                     <form action="author_controller.php" method="POST">
-
                         <input type="hidden" name="action" value="create">
 
                         <div class="mb-4">
@@ -114,12 +97,7 @@ include '../includes/header.php';
                                 Author Name
                             </label>
 
-                            <input
-                                type="text"
-                                name="name"
-                                class="form-control"
-                                placeholder="Enter author name..."
-                                required>
+                            <input type="text" name="name" class="form-control" placeholder="Enter author name..." required>
                         </div>
 
                         <div class="d-flex gap-2">
@@ -131,19 +109,12 @@ include '../includes/header.php';
                             <a href="index.php" class="btn btn-secondary btn-cancel">
                                 Cancel
                             </a>
-
                         </div>
-
                     </form>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 <?php include '../includes/footer.php'; ?>

@@ -198,7 +198,7 @@ body{
                                 Confirm Return
                             </button>
 
-                            <a href="index.php"
+                            <a href="../Borrow/index.php"
                                class="btn btn-secondary">
                                 Cancel
                             </a>

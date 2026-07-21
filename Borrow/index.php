@@ -85,34 +85,50 @@
     .table tbody tr:hover{
         background:#f8f7ff;
     }
+    .history-badge-returned{
+        text-decoration: none; 
+        background:#d1e7dd;
+        color:#0f5132;
+        padding:8px 12px;
+        border-radius:10px;
+        font-size:12px;
+        font-weight:600;
+    }
+
+    .history-badge-borrowed{
+        background:#fff3cd;
+        color:#856404;
+        padding:8px 12px;
+        border-radius:10px;
+        font-size:12px;
+        font-weight:600;
+    }
 </style>
 
 <div class="container-fluid py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-
         <div>
             <h2 class="page-title">Borrowed Books</h2>
             <p class="page-subtitle mb-0">
                 Manage currently borrowed books
             </p>
         </div>
-
-        <a href="borrow_book.php" class="btn btn-purple">
-            + Borrow a Book
-        </a>
-
+        <div>
+            <a href="borrow_history.php" class="btn btn-purple">
+               View Histroy
+            </a>
+            <a href="borrow_book.php" class="btn btn-purple">
+                + Borrow a Book
+            </a>
+        </div>
     </div>
 
     <!-- Statistics Card -->
     <div class="row mb-4">
-
         <div class="col-md-4">
-
             <div class="card stat-card p-4">
-
                 <div class="d-flex justify-content-between align-items-center">
-
                     <div>
                         <small class="text-muted">
                             Currently Borrowed
@@ -133,11 +149,8 @@
                         </svg>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
     </div>
 
     <!-- Borrow Table -->
@@ -178,11 +191,10 @@
                                 alt="Icon" 
                                 width="20" height="20" 
                                 class="me-2" />
-                            <span class="fw-semibold text-secondary">
+                            <span class="text-dark">
                                 <?= htmlspecialchars($row['title']); ?>
                             </span>
                         </td>
-
 
                         <td>
                             <div class="d-flex align-items-center">
@@ -195,42 +207,27 @@
                             <span class="text-muted"><?= date('d M Y', strtotime($row['borrow_date'])); ?></span>
                         </td>
 
-                        <td class="text-center">
-    <span class="badge rounded-pill px-3 py-2"
-          style="
-            background:#e8f8ef;
-            color:#198754;
-            border:1px solid #c6f0d5;
-            font-size:13px;
-          ">
-        <i class="bi bi-book-fill me-1"></i>
-        Borrowed
-    </span>
-</td>
+                        <td class="text-start">
+                            <span class="history-badge-borrowed">
+                                Borrowed
+                            </span>
+                        </td>
 
-<td class="text-end">
-    <a href="../Return/return_book.php?id=<?= $row['id']; ?>"
-       class="btn btn-success btn-sm rounded-pill px-3">
-
-        <i class="bi bi-arrow-return-left me-1"></i>
-        Return
-
-    </a>
-</td>
+                        <td class="text-end">
+                            <a href="../Return/return_book.php?id=<?= $row['id']; ?>" class="history-badge-returned">
+                                Return
+                            </a>
+                        </td>
 
                     </tr>
-
-                        <?php endwhile; ?>
-
+                    <?php endwhile; ?>
                     <?php else: ?>
 
                         <tr>
                             <td colspan="6" class="text-center py-5">
-
                                 <h6 class="text-muted">
                                     No books currently borrowed
                                 </h6>
-
                             </td>
                         </tr>
 

@@ -131,9 +131,7 @@ body{
                                 Select a book and member
                             </small>
                         </div>
-
                     </div>
-
                 </div>
 
                 <div class="card-body p-4">
