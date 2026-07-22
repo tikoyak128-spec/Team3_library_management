@@ -1,8 +1,8 @@
 <?php include '../includes/header.php'; ?>
 
 <?php
-define('BASE_PATH', dirname(__DIR__));
-require_once BASE_PATH . '/Database/db.php';
+    define('BASE_PATH', dirname(__DIR__));
+    require_once BASE_PATH . '/Database/db.php';
 ?>
 
 <style>
@@ -23,7 +23,7 @@ require_once BASE_PATH . '/Database/db.php';
     }
 
     .card-header-custom{
-        background:linear-gradient(135deg,#6C3EF4,#8B5CF6);
+        background:#6f42c1;
         color:white;
         border-radius:16px 16px 0 0;
         padding:20px;
@@ -46,7 +46,7 @@ require_once BASE_PATH . '/Database/db.php';
     }
 
     .btn-purple{
-        background:#6C3EF4;
+        background:#6f42c1;
         border:none;
         color:#fff;
         padding:10px 25px;
@@ -107,7 +107,7 @@ require_once BASE_PATH . '/Database/db.php';
                             </button>
 
                             <a href="index.php" class="btn btn-secondary btn-cancel">
-                                Cancel
+                                Back
                             </a>
                         </div>
                     </form>

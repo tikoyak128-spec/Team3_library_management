@@ -20,7 +20,7 @@ $totalHistory = $conn->query("
 
 <style>
 :root{
-    --primary:#6C3EF4;
+    --primary:#6f42c1;
     --bg:#F7F8FC;
 }
 
@@ -36,7 +36,7 @@ body{
 }
 
 .history-header{
-    background:linear-gradient(135deg,#6C3EF4,#8B5CF6);
+    background:#6f42c1;
     color:white;
     padding:20px;
 }
@@ -48,7 +48,7 @@ body{
 }
 
 .btn-purple{
-    background:#6C3EF4;
+    background:#6f42c1;
     color:white;
     border:none;
     border-radius:12px;
@@ -62,8 +62,8 @@ body{
 }
 
 .history-badge-returned{
-    background:#d1e7dd;
-    color:#0f5132;
+    background:#e2d9f3;
+    color:#6f42c1;
     padding:8px 12px;
     border-radius:10px;
     font-size:12px;

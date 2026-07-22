@@ -21,7 +21,7 @@
 
 <style>
     :root{
-        --primary:#6C3EF4;
+        --primary:#6f42c1;
         --secondary:#8B5CF6;
         --bg:#F7F8FC;
     }
@@ -62,7 +62,7 @@
         width:60px;
         height:60px;
         border-radius:15px;
-        background:rgba(108,62,244,.1);
+        background:#e2d9f3;
         display:flex;
         align-items:center;
         justify-content:center;
@@ -77,7 +77,7 @@
     }
 
     .borrow-header{
-        background:linear-gradient(135deg,#6C3EF4,#8B5CF6);
+        background:#6f42c1;
         color:white;
         padding:20px;
     }
@@ -87,8 +87,8 @@
     }
     .history-badge-returned{
         text-decoration: none; 
-        background:#d1e7dd;
-        color:#0f5132;
+        background:#e2d9f3;
+        color:#6f42c1;
         padding:8px 12px;
         border-radius:10px;
         font-size:12px;
@@ -215,7 +215,7 @@
 
                         <td class="text-end">
                             <a href="../Return/return_book.php?id=<?= $row['id']; ?>" class="history-badge-returned">
-                                Return
+                                Check in
                             </a>
                         </td>
 

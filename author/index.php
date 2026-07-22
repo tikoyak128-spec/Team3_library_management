@@ -10,7 +10,7 @@ $totalAuthors = $conn->query("SELECT COUNT(*) as total FROM authors")->fetch_ass
 
 <style>
     :root{
-        --primary:#6C3EF4;
+        --primary:#6f42c1;
         --secondary:#8B5CF6;
         --bg:#F7F8FC;
     }
@@ -56,7 +56,7 @@ $totalAuthors = $conn->query("SELECT COUNT(*) as total FROM authors")->fetch_ass
     }
 
     .author-header{
-        background:linear-gradient(135deg,#6C3EF4,#8B5CF6);
+        background:#6f42c1;
         color:white;
         padding:20px;
     }

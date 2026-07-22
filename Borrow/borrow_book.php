@@ -20,7 +20,7 @@ $members = $conn->query("
 
 <style>
 :root{
-    --primary:#6C3EF4;
+    --primary:#6f42c1;
     --secondary:#8B5CF6;
     --bg:#F7F8FC;
 }
@@ -46,7 +46,7 @@ body{
 }
 
 .card-header-custom{
-    background:linear-gradient(135deg,#6C3EF4,#8B5CF6);
+    background:#6f42c1;
     color:white;
     padding:25px;
 }
@@ -76,7 +76,7 @@ body{
     font-weight:600;
 }
 .btn-purple{
-    background:#6C3EF4;
+    background:#6f42c1;
     border:none;
     color:white;
     border-radius:12px;
@@ -157,11 +157,9 @@ body{
                                     <?php while($b = $books->fetch_assoc()): ?>
 
                                         <option value="<?= $b['id']; ?>">
-
                                             <?= htmlspecialchars($b['title']); ?>
                                             (Available:
                                             <?= $b['quantity']; ?>)
-
                                         </option>
 
                                     <?php endwhile; ?>
@@ -183,65 +181,38 @@ body{
                                     <option value="">
                                         Select a Member
                                     </option>
-
                                     <?php while($m = $members->fetch_assoc()): ?>
-
                                         <option value="<?= $m['id']; ?>">
-
                                             <?= htmlspecialchars($m['name']); ?>
-
                                         </option>
-
                                     <?php endwhile; ?>
-
                                 </select>
-
                             </div>
 
                             <div class="col-md-12 mb-4">
-
                                 <label class="form-label">
                                     Borrow Date
                                 </label>
-
-                                <input type="date"
-                                       name="borrow_date"
-                                       class="form-control"
-                                       value="<?= date(''); ?>"
-                                       required>
-
+                                <input type="date" name="borrow_date" class="form-control" value="<?= date('Y-m-d'); ?>" required>
                             </div>
-
                         </div>
 
                         <div class="d-flex gap-2">
 
-                            <button type="submit"
-                                    class="btn btn-purple">
-
+                            <button type="submit" class="btn btn-purple">
                                 Borrow Book
-
                             </button>
 
-                            <a href="index.php"
-                               class="btn btn-secondary">
-
-                                Cancel
-
+                            <a href="index.php" class="btn btn-secondary">
+                                Back
                             </a>
-
                         </div>
-
                     </form>
 
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 <?php include '../includes/footer.php'; ?>

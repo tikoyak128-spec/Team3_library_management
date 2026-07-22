@@ -1,31 +1,31 @@
 <?php include '../includes/header.php'; ?>
 
 <?php
-define('BASE_PATH', dirname(__DIR__));
-require_once BASE_PATH . '/Database/db.php';
+    define('BASE_PATH', dirname(__DIR__));
+    require_once BASE_PATH . '/Database/db.php';
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+    $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-$stmt = $conn->prepare("SELECT * FROM authors WHERE id = ?");
-$stmt->bind_param("i", $id);
-$stmt->execute();
+    $stmt = $conn->prepare("SELECT * FROM authors WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
 
-$author = $stmt->get_result()->fetch_assoc();
+    $author = $stmt->get_result()->fetch_assoc();
 
-if (!$author) {
-    echo '<div class="container py-4">
-            <div class="alert alert-danger">
-                Author not found.
-            </div>
-          </div>';
-    include '../includes/footer.php';
-    exit;
-}
+    if (!$author) {
+        echo '<div class="container py-4">
+                <div class="alert alert-danger">
+                    Author not found.
+                </div>
+            </div>';
+        include '../includes/footer.php';
+        exit;
+    }
 ?>
 
 <style>
   :root{
-      --primary:#6C3EF4;
+      --primary:#6f42c1;
       --secondary:#8B5CF6;
       --bg:#F7F8FC;
   }
@@ -42,7 +42,7 @@ if (!$author) {
   }
 
   .card-header-custom{
-      background:linear-gradient(135deg,#6C3EF4,#8B5CF6);
+      background:#6f42c1;
       color:white;
       padding:25px;
   }
@@ -63,7 +63,7 @@ if (!$author) {
   }
 
   .btn-purple{
-      background:#6C3EF4;
+      background:#6f42c1;
       border:none;
       color:white;
       border-radius:12px;
@@ -123,47 +123,28 @@ if (!$author) {
                         <input type="hidden" name="id" value="<?= $author['id']; ?>">
 
                         <div class="mb-4">
-
                             <label class="form-label">
                                 Author Name
                             </label>
 
-                            <input type="text"
-                                   name="name"
-                                   class="form-control"
-                                   value="<?= htmlspecialchars($author['name']); ?>"
-                                   required>
-
+                            <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($author['name']); ?>"required>
                         </div>
 
                         <div class="d-flex gap-2">
-
-                            <button type="submit"
-                                    class="btn btn-purple">
-
+                            <button type="submit" class="btn btn-purple">
                                 Update Author
-
                             </button>
 
-                            <a href="index.php"
-                               class="btn btn-secondary">
-
-                                Cancel
-
+                            <a href="index.php" class="btn btn-secondary">
+                                Back
                             </a>
-
                         </div>
-
                     </form>
 
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 <?php include '../includes/footer.php'; ?>

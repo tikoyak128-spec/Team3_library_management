@@ -9,85 +9,74 @@ $totalMembers = $conn->query("SELECT COUNT(*) as total FROM members")->fetch_ass
 ?>
 
 <style>
-  :root{
-      --primary:#6C3EF4;
-      --secondary:#8B5CF6;
-      --bg:#F5F6FA;
-  }
+    :root{
+        --primary:#6f42c1;
+        --secondary:#8B5CF6;
+        --bg:#F5F6FA;
+    }
 
-  body{
-      background:var(--bg);
-  }
+    body{
+        background:var(--bg);
+    }
 
-  .page-title{
-      font-weight:700;
-      color:#111827;
-  }
+    .page-title{
+        font-weight:700;
+        color:#111827;
+    }
 
-  .page-subtitle{
-      color:#6B7280;
-  }
+    .page-subtitle{
+        color:#6B7280;
+    }
 
-  .btn-purple{
-      background:#6C3EF4;
-      color:#fff;
-      border:none;
-      border-radius:12px;
-      padding:12px 20px;
-      font-weight:600;
-  }
+    .btn-purple{
+        background:#6f42c1;
+        color:#fff;
+        border:none;
+        border-radius:12px;
+        padding:12px 20px;
+        font-weight:600;
+    }
 
-  .btn-purple:hover{
-      background:#5B2EF0;
-      color:#fff;
-  }
+    .btn-purple:hover{
+        background:#5B2EF0;
+        color:#fff;
+    }
 
-  .stat-card{
-      border:none;
-      border-radius:20px;
-      background:#fff;
-      box-shadow:0 4px 15px rgba(0,0,0,.05);
-  }
+    .stat-card{
+        border:none;
+        border-radius:20px;
+        background:#fff;
+        box-shadow:0 4px 15px rgba(0,0,0,.05);
+    }
 
-  .stat-icon{
-      width:60px;
-      height:60px;
-      border-radius:15px;
-      background:#F1ECFF;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:28px;
-  }
+    .member-card{
+        border:none;
+        border-radius:20px;
+        overflow:hidden;
+        background:#fff;
+        box-shadow:0 4px 15px rgba(0,0,0,.05);
+    }
 
-  .member-card{
-      border:none;
-      border-radius:20px;
-      overflow:hidden;
-      background:#fff;
-      box-shadow:0 4px 15px rgba(0,0,0,.05);
-  }
+    .member-header{
+        background:#6f42c1;
+        color:white;
+        padding:20px;
+    }
 
-  .member-header{
-      background:linear-gradient(90deg,#6C3EF4,#8B5CF6);
-      color:white;
-      padding:20px;
-  }
+    .table{
+        margin-bottom:0;
+    }
 
-  .table{
-      margin-bottom:0;
-  }
+    .table thead th{
+        font-weight:600;
+        border-bottom:1px solid #e5e7eb;
+    }
 
-  .table thead th{
-      font-weight:600;
-      border-bottom:1px solid #e5e7eb;
-  }
+    .table tbody tr:hover{
+        background:#faf7ff;
+    }
 
-  .table tbody tr:hover{
-      background:#faf7ff;
-  }
-
-  .btn-edit{
+    .btn-edit{
         text-decoration: none; 
         background:#d1e7dd;
         color:#0f5132;

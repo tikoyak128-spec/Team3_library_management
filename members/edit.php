@@ -19,62 +19,62 @@ if (!$member) {
 ?>
 
 <style>
-  :root{
-      --primary:#6C3EF4;
-      --secondary:#8B5CF6;
-      --bg:#F5F6FA;
-  }
+    :root{
+        --primary:#6C3EF4;
+        --secondary:#8B5CF6;
+        --bg:#F5F6FA;
+    }
 
-  body{
-      background:var(--bg);
-  }
+    body{
+        background:var(--bg);
+    }
 
-  .member-card{
-      border:none;
-      border-radius:20px;
-      overflow:hidden;
-      box-shadow:0 5px 20px rgba(0,0,0,.08);
-  }
+    .member-card{
+        border:none;
+        border-radius:20px;
+        overflow:hidden;
+        box-shadow:0 5px 20px rgba(0,0,0,.08);
+    }
 
-  .card-header-custom{
-      background:linear-gradient(135deg,#6C3EF4,#8B5CF6);
-      color:white;
-      padding:25px;
-  }
+    .card-header-custom{
+        background:#6f42c1;
+        color:white;
+        padding:25px;
+    }
 
-  .form-label{
-      font-weight:600;
-      color:#374151;
-  }
+    .form-label{
+        font-weight:600;
+        color:#374151;
+    }
 
-  .form-control{
-      height:50px;
-      border-radius:12px;
-  }
+    .form-control{
+        height:50px;
+        border-radius:12px;
+    }
 
-  .form-control:focus{
-      border-color:#6C3EF4;
-      box-shadow:0 0 0 .2rem rgba(108,62,244,.15);
-  }
+    .form-control:focus{
+        border-color:#6C3EF4;
+        box-shadow:0 0 0 .2rem rgba(108,62,244,.15);
+    }
 
-  .btn-purple{
-      background:#6C3EF4;
-      border:none;
-      color:white;
-      border-radius:12px;
-      padding:10px 25px;
-      font-weight:600;
-  }
+    .btn-purple{
+        background:#6f42c1;
+        border:none;
+        color:white;
+        border-radius:12px;
+        padding:10px 25px;
+        font-weight:600;
+    }
 
-  .btn-purple:hover{
-      background:#5B2EF0;
-      color:white;
-  }
+    .btn-purple:hover{
+        background:#5B2EF0;
+        color:white;
+    }
 
-  .btn-secondary{
-      border-radius:12px;
-      padding:10px 25px;
-  }
+    .btn-secondary{
+        border-radius:12px;
+        padding:10px 25px;
+    }
 </style>
 
 <div class="container-fluid py-4">

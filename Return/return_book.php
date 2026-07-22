@@ -27,7 +27,7 @@ if (!$borrow) {
 
 <style>
 :root{
-    --primary:#6C3EF4;
+    --primary:#6f42c1;
     --secondary:#8B5CF6;
     --bg:#F7F8FC;
 }
@@ -44,7 +44,7 @@ body{
 }
 
 .card-header-custom{
-    background:linear-gradient(135deg,#6C3EF4,#8B5CF6);
+    background:#6f42c1;
     color:white;
     padding:25px;
 }
@@ -84,7 +84,7 @@ body{
 }
 
 .btn-return{
-    background:#198754;
+    background:#6f42c1;
     border:none;
     color:white;
     border-radius:12px;
@@ -101,51 +101,20 @@ body{
     border-radius:12px;
     padding:10px 25px;
 }
-
-.stat-icon{
-    width:70px;
-    height:70px;
-    border-radius:15px;
-    background:rgba(255,255,255,.15);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
 </style>
 
 <div class="container-fluid py-4">
-
     <div class="row justify-content-center">
-
         <div class="col-lg-8">
-
             <div class="card return-card">
-
                 <div class="card-header-custom">
-
                     <div class="d-flex align-items-center">
-
-                        <div class="stat-icon">
-
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 viewBox="0 0 512 512"
-                                 width="40"
-                                 height="40"
-                                 fill="currentColor"
-                                 class="text-white">
-
-                                <path d="M177.5 64C168.7 64 160.8 69.4 157.5 77.5C154.2 85.6 156.1 94.9 162.3 101.1L205.3 144L80 144C53.5 144 32 165.5 32 192L32 384C32 410.5 53.5 432 80 432L432 432C458.5 432 480 410.5 480 384L480 192C480 165.5 458.5 144 432 144L306.7 144L349.7 101.1C355.9 94.9 357.8 85.6 354.5 77.5C351.2 69.4 343.3 64 334.5 64L177.5 64z"/>
-                            </svg>
-
-                        </div>
 
                         <div class="ms-3">
                             <h4 class="mb-0">Return Book</h4>
                             <small>Confirm book return transaction</small>
                         </div>
-
                     </div>
-
                 </div>
 
                 <div class="card-body p-4">
@@ -172,49 +141,36 @@ body{
                     </div>
 
                     <form action="return_controller.php" method="POST">
-
-                        <input type="hidden"
-                               name="borrow_id"
-                               value="<?= $borrow['id']; ?>">
-
+                        <input type="hidden" name="borrow_id" value="<?= $borrow['id']; ?>">
                         <div class="mb-4">
-
                             <label class="form-label">
                                 Return Date
                             </label>
 
-                            <input type="date"
-                                   name="return_date"
-                                   class="form-control"
-                                   value="<?= date('Y-m-d'); ?>"
-                                   required>
-
+                            <input
+                                type="date"
+                                name="return_date"
+                                class="form-control"
+                                value="<?= date('Y-m-d'); ?>"
+                                min="<?= $borrow['borrow_date']; ?>"
+                                required>
                         </div>
 
                         <div class="d-flex gap-2">
-
-                            <button type="submit"
-                                    class="btn btn-return">
-                                Confirm Return
+                            <button type="submit" class="btn btn-return">
+                                Confirm
                             </button>
 
-                            <a href="../Borrow/index.php"
-                               class="btn btn-secondary">
-                                Cancel
+                            <a href="../Borrow/index.php" class="btn btn-secondary">
+                                Back
                             </a>
-
                         </div>
-
                     </form>
 
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 <?php include '../includes/footer.php'; ?>
