@@ -12,13 +12,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <!-- Navigation Links -->
     <nav class="sidebar-menu">
         <ul>
-            <li class="<?php echo ($current_page == 'index.php' && strpos($_SERVER['REQUEST_URI'], 'Dashboard') !== false) ? 'active' : ''; ?>">
+            <li class="<?php echo ($current_page == 'index.php' && strpos($_SERVER['REQUEST_URI'], 'dashboard') !== false) ? 'active' : ''; ?>">
                 <a href="<?php echo BASE_URL; ?>Dashboard/index.php">
                     <i class="fa-solid fa-table-columns"></i> <span>Dashboard</span>
                 </a>
             </li>
-            <li class="<?php echo (strpos($_SERVER['REQUEST_URI'], 'Members') !== false) ? 'active' : ''; ?>">
-                <a href="<?php echo BASE_URL; ?>Members/index.php">
+            <li class="<?php echo (strpos($_SERVER['REQUEST_URI'], 'members') !== false) ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>members/index.php">
                     <i class="fa-solid fa-users"></i> <span>Students</span>
                 </a>
             </li>
@@ -29,17 +29,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
             <li class="<?php echo (strpos($_SERVER['REQUEST_URI'], 'Borrow') !== false || strpos($_SERVER['REQUEST_URI'], 'Return') !== false) ? 'active' : ''; ?>">
                 <a href="<?php echo BASE_URL; ?>Borrow/index.php">
-                    <i class="fa-solid fa-right-left"></i> <span>Book Issued/Return</span>
+                    <i class="fa-solid fa-right-left"></i> <span>Borrowed Books</span>
                 </a>
             </li>
-            <li class="<?php echo (strpos($_SERVER['REQUEST_URI'], 'Categories') !== false) ? 'active' : ''; ?>">
-                <a href="<?php echo BASE_URL; ?>Categories/index.php">
+            <li class="<?php echo (strpos($_SERVER['REQUEST_URI'], 'categories') !== false) ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>categories/index.php">
                     <i class="fa-solid fa-tags"></i> <span>Categories</span>
                 </a>
             </li>
-            <li class="<?php echo (strpos($_SERVER['REQUEST_URI'], 'Authors') !== false) ? 'active' : ''; ?>">
-                <a href="<?php echo BASE_URL; ?>Authors/index.php">
-                    <i class="fa-solid fa-pen-nib"></i> <span>Authors</span>
+            <li class="<?php echo (strpos($_SERVER['REQUEST_URI'], 'search') !== false) ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>search/search.php">
+                    <i class="fa-solid fa-pen-nib"></i> <span>Search</span>
                 </a>
             </li>
         </ul>

@@ -1,6 +1,5 @@
 <?php
 if (!defined('BASE_URL')) {
-    // Dynamically matches your exact folder name 'php +20larevel/TEAM3-library_management/'
     define('BASE_URL', 'http://localhost/php%20+20larevel/TEAM3-library_management/');
 }
 ?>
@@ -13,12 +12,12 @@ if (!defined('BASE_URL')) {
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Primary Global Stylesheet Layout Core -->
+    <link rel="stylesheet" href="../Assets/css/dashboard.css">
+     <link rel="stylesheet" href="../Assets/css/style.css">
+    <!-- Primary Global Stylesheets -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>Assets/css/style.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>Assets/css/dashboard.css">
-    <link rel="stylesheet" href="../Assets/css/style.css">
-    <link rel="stylesheet" href="../Assets/css/dashboard.css">
+    
     <!-- Dynamic Page Stylesheet Injection -->
     <?php if (isset($page_styles) && is_array($page_styles)): ?>
         <?php foreach ($page_styles as $style): ?>
@@ -28,4 +27,3 @@ if (!defined('BASE_URL')) {
 </head>
 <body>
 <div class="app-container">
-    <!-- Sidebar will be included right below this in the page template -->

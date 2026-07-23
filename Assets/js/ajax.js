@@ -1,53 +1,43 @@
-/**
- * Global AJAX Utility Service Wrapper
- */
-const AppAJAX = {
-    /**
-     * Send a GET Request
-     * @param {string} url - Target URL path endpoint
-     * @returns {Promise<any>} Response parsing promise
-     */
-    async get(url) {
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            });
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            return await response.json();
-        } catch (error) {
-            console.error('AJAX GET Execution Failed:', error);
-            throw error;
+document.addEventListener('DOMContentLoaded', () => {
+    const globalSearchInput = document.getElementById('globalSearch');
+    const filterForm = document.getElementById('filterForm');
+    const sortSelect = document.getElementById('sortSelect');
+    const filterSelect = document.getElementById('filterSelect');
+    const resultsContainer = document.getElementById('product-container'); 
+
+    const submitCombinedFilters = async () => {
+        if (!filterForm) return;
+        const formData = new FormData(filterForm);
+
+        if (globalSearchInput) {
+            formData.set('search', globalSearchInput.value.trim());
         }
-    },
 
-    /**
-     * Send a POST Request
-     * @param {string} url - Target URL path endpoint
-     * @param {Object|FormData} data - Payloads data package
-     * @returns {Promise<any>} Response parsing promise
-     */
-    async post(url, data) {
         try {
-            let bodyData = data;
-            const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+            const endpoint = filterForm.action || 'controllers/filterHandler.php';
+            const result = await AppAJAX.post(endpoint, formData);
 
-            // If payload is plain object, transform to JSON package format
-            if (!(data instanceof FormData)) {
-                headers['Content-Type'] = 'application/json';
-                bodyData = JSON.stringify(data);
+            if (result && result.success) {
+                if (resultsContainer) {
+                    resultsContainer.innerHTML = result.html;
+                }
+            } else {
+                console.error('Server returned an error:', result?.message || 'Unknown error');
             }
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: headers,
-                body: bodyData
-            });
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            return await response.json();
         } catch (error) {
-            console.error('AJAX POST Execution Failed:', error);
-            throw error;
+            console.error('Failed to submit filters via AJAX:', error);
         }
+    };
+
+    if (sortSelect) sortSelect.addEventListener('change', submitCombinedFilters);
+    if (filterSelect) filterSelect.addEventListener('change', submitCombinedFilters);
+
+    if (globalSearchInput) {
+        globalSearchInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                submitCombinedFilters();
+            }
+        });
     }
-};
+});

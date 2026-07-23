@@ -1,22 +1,19 @@
-
 <?php
- define('BASE_URL' , 'https://localhost//?Library-Management-System');
+// Define Base URL without double slashes
+define('BASE_URL', 'http://localhost/TEAM3-library_management/');
 
-  $servername = "localhost";
-  $username = 'root';
-  $db_name = 'library_management';
-  $password = '';
+$servername = "localhost";
+$username   = 'root';
+$db_name    = 'library_management';
+$password   = '';
 
-  try{
-    $conn = new PDO("mysql:host=$servername;dbname=$db_name",$username,$password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$db_name;charset=utf8mb4", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     
-    echo "Your library connect successfully";
-  }catch(PDOException $e){
-    echo "connect failed ".$e->getMessage();
-  }
-
-  
-
-
+    // DO NOT echo anything here so AJAX / JSON responses stay clean!
+} catch (PDOException $e) {
+    die("Database Connection failed: " . $e->getMessage());
+}
 ?>

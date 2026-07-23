@@ -4,31 +4,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterForm = document.getElementById('filterForm');
     const sortSelect = document.getElementById('sortSelect');
     const filterSelect = document.getElementById('filterSelect');
+    
+    // Optional: Container where your dynamic results/products will be rendered
+    const resultsContainer = document.getElementById('product-container'); 
 
     /**
-     * Helper function to safely inject or update the search value 
-     * inside the hidden field of the filter form before submission.
+     * Helper function to gather form parameters and submit via AJAX 
+     * instead of triggering a full page reload.
      */
-    const submitCombinedFilters = () => {
+    const submitCombinedFilters = async () => {
         if (!filterForm) return;
 
-        // Find or create a hidden input for the search parameter
-        let hiddenSearchInput = filterForm.querySelector('input[name="search"]');
-        
-        if (!hiddenSearchInput) {
-            hiddenSearchInput = document.createElement('input');
-            hiddenSearchInput.type = 'hidden';
-            hiddenSearchInput.name = 'search';
-            filterForm.appendChild(hiddenSearchInput);
-        }
+        // Gather all form fields using FormData
+        const formData = new FormData(filterForm);
 
-        // Sync the current navbar text to the form
+        // Include the global search input value if it exists outside the form
         if (globalSearchInput) {
-            hiddenSearchInput.value = globalSearchInput.value.trim();
+            formData.set('search', globalSearchInput.value.trim());
         }
 
-        // Send it off to the backend controller
-        filterForm.submit();
+        try {
+            // Determine the endpoint from the form's action attribute, or use a default
+            const endpoint = filterForm.action || 'controllers/filterHandler.php';
+
+            // Send data asynchronously using our Ajax utility
+            const result = await Ajax.post(endpoint, formData);
+
+            // Handle the response (assuming your PHP backend returns JSON with a success flag and HTML string)
+            if (result && result.success) {
+                if (resultsContainer) {
+                    resultsContainer.innerHTML = result.html;
+                } else {
+                    console.warn('Results container #product-container not found in DOM.');
+                }
+            } else {
+                console.error('Server returned an error:', result?.message || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Failed to submit filters via AJAX:', error);
+        }
     };
 
     // 2. Event Listeners for Dropdowns (Change Event)
@@ -48,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (globalSearchInput) {
         globalSearchInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
-                event.preventDefault(); // Stop page from doing standard form reload
+                event.preventDefault(); // Stop standard form submission
                 submitCombinedFilters();
             }
         });
