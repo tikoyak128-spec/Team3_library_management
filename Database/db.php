@@ -1,6 +1,7 @@
 <?php
+
 // Define Base URL without double slashes
-define('BASE_URL', 'http://localhost/TEAM3-library_management/');
+define('BASE_URL', 'http://localhost/php%20+%20larevel/TEAM3-library_management/');
 
 $servername = "localhost";
 $username   = 'root';

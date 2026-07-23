@@ -1,6 +1,7 @@
 <?php
 // Helper to detect current page and add 'active' class
 $current_page = basename($_SERVER['PHP_SELF']);
+require_once __DIR__ . '/../Authentication/auth_check.php';
 ?>
 <aside class="sidebar">
     <!-- Branding -->
@@ -54,16 +55,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <!-- User Profile & Logout at Bottom -->
     <div class="sidebar-footer">
-        <div class="user-info">
-            <img src="<?php echo BASE_URL; ?>Assets/images/user-placeholder.jpg" alt="Admin Avatar" class="avatar-sm">
-            <div>
-                <h4>Vanshika Pandey</h4>
-                <p>HR Manager</p>
-            </div>
-        </div>
-        <a href="<?php echo BASE_URL; ?>Authentication/logout.php" class="btn-logout">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </a>
+        
+       <a href="<?php echo BASE_URL; ?>Authentication/logout.php" class="btn-logout">
+    <i class="fa-solid fa-right-from-bracket"></i> Logout
+</a>
     </div>
 </aside>
 
