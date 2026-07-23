@@ -1,20 +1,21 @@
 <?php
 require_once __DIR__ . '/../Authentication/auth_check.php';
 require_once __DIR__ . '/book_controller.php';
+require_once __DIR__ . '/../Database/db.php';
 
 $pageTitle  = 'Add Book';
 $activePage = 'books';
 $error = '';
 
-$authors    = $pdo->query('SELECT id, name FROM authors ORDER BY name')->fetchAll();
-$categories = $pdo->query('SELECT id, name FROM categories ORDER BY name')->fetchAll();
+$authors    = $conn->query('SELECT id, name FROM authors ORDER BY name')->fetchAll();
+$categories = $conn->query('SELECT id, name FROM categories ORDER BY name')->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title'] ?? '');
     if ($title === '') {
         $error = 'Title is required.';
     } else {
-        createBook($pdo, [
+        createBook($conn, [
             'title'         => $title,
             'author_id'     => $_POST['author_id'] ?? null,
             'category_id'   => $_POST['category_id'] ?? null,
@@ -27,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 require __DIR__ . '/../Includes/header.php';
-require __DIR__ . '/../Includes/navbar.php';
+
 ?>
 <main class="main-content">
     <link rel="stylesheet" href="style.css">

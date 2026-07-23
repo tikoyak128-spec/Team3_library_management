@@ -5,7 +5,7 @@ require_once __DIR__ . '/book_controller.php';
 $pageTitle  = 'Book Details';
 $activePage = 'books';
 $id = (int)($_GET['id'] ?? 0);
-$book = getBookById($pdo, $id);
+$book = getBookById($conn, $id);
 if (!$book) { header('Location: index.php'); exit; }
 
 require __DIR__ . '/../Includes/header.php';
@@ -22,7 +22,7 @@ require __DIR__ . '/../Includes/navbar.php';
             <tr><th>ISBN</th><td><?= htmlspecialchars($book['isbn'] ?? '—') ?></td></tr>
             <tr><th>Total Copies</th><td><?= (int)$book['total_copies'] ?></td></tr>
             <tr><th>Available</th><td><?= (int)$book['available_copies'] ?></td></tr>
-            <tr><th>Added</th><td><?= htmlspecialchars($book['added_date']) ?></td></tr>
+            <tr><th>Added</th><td><?= htmlspecialchars($book['added_date'] ?? $book['created_at'] ?? 'N/A') ?></td></tr>
         </table>
         <div class="form-actions">
             <a href="edit.php?id=<?= $book['id'] ?>" class="btn btn-primary">Edit</a>

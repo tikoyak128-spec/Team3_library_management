@@ -1,23 +1,24 @@
 <?php
 require_once __DIR__ . '/../Authentication/auth_check.php';
 require_once __DIR__ . '/book_controller.php';
-
+// Replace line 4 with this:
+require_once __DIR__ . '/../Database/db.php';
 $pageTitle  = 'Edit Book';
 $activePage = 'books';
 $id = (int)($_GET['id'] ?? 0);
-$book = getBookById($pdo, $id);
+$book = getBookById($conn, $id);
 if (!$book) { header('Location: index.php'); exit; }
 
 $error = '';
-$authors    = $pdo->query('SELECT id, name FROM authors ORDER BY name')->fetchAll();
-$categories = $pdo->query('SELECT id, name FROM categories ORDER BY name')->fetchAll();
+$authors    = $conn->query('SELECT id, name FROM authors ORDER BY name')->fetchAll();
+$categories = $conn->query('SELECT id, name FROM categories ORDER BY name')->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title'] ?? '');
     if ($title === '') {
         $error = 'Title is required.';
     } else {
-        updateBook($pdo, $id, [
+        updateBook($conn, $id, [
             'title'         => $title,
             'author_id'     => $_POST['author_id'] ?? null,
             'category_id'   => $_POST['category_id'] ?? null,
@@ -31,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 require __DIR__ . '/../Includes/header.php';
-require __DIR__ . '/../Includes/navbar.php';
+
 ?>
 <main class="main-content">
     <link rel="stylesheet" href="style.css">
@@ -67,7 +68,7 @@ require __DIR__ . '/../Includes/navbar.php';
             </div>
             <div class="form-group">
                 <label>Total Copies</label>
-                <input type="number" name="total_copies" min="1" value="<?= htmlspecialchars($book['total_copies']) ?>">
+                <input type="number" name="total_copies" value="<?php echo htmlspecialchars($book['total_copies'] ?? $book['quantity'] ?? 1); ?>">
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Update Book</button>
