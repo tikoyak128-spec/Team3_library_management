@@ -1,4 +1,5 @@
 <?php
+
 // Define Base URL without double slashes
 define('BASE_URL', 'http://localhost/TEAM3-library_management/');
 
