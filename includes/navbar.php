@@ -6,15 +6,9 @@
             <i class="fa-solid fa-chevron-down arrow"></i>
         </div>
     </div>
+    
 
-    <div class="navbar-search">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" id="globalSearch" placeholder="Search...">
-    </div>
 
-    <div class="navbar-profile">
-        <img src="<?php echo BASE_URL; ?>Assets/images/user-placeholder.jpg" alt="Profile" class="avatar-circle">
-    </div>
 </header>
 
 <script>

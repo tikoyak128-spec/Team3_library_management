@@ -45,3 +45,13 @@ CREATE TABLE IF NOT EXISTS borrowings (
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
 );
+
+ALTER TABLE books 
+  ADD status VARCHAR(100),
+  ADD total_copies INT,
+  ADD available_copies INT,
+  ADD added_date TIMESTAMP,
+  ADD cover_image VARCHAR(100) AFTER quantity;
+
+
+  ALTER TABLE members ADD profile_image VARCHAR(150);

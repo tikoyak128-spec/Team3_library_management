@@ -72,6 +72,41 @@ try {
             'borrowings' => $borrowings
         ]
     ]);
+    $stmtBook = $conn->prepare("
+    SELECT b.*, a.name AS author_name, c.name AS category_name 
+    FROM books b 
+    LEFT JOIN authors a ON b.author_id = a.id 
+    LEFT JOIN categories c ON b.category_id = c.id 
+    WHERE LOWER(b.title) LIKE LOWER(:query) 
+       OR LOWER(a.name) LIKE LOWER(:query) 
+       OR LOWER(c.name) LIKE LOWER(:query)
+       OR CAST(b.id AS CHAR) LIKE :query
+    ORDER BY b.id DESC
+");
+$stmtBook->execute([':query' => $searchTerm]);
+$books = $stmtBook->fetchAll(PDO::FETCH_ASSOC);
+$stmtMember = $conn->prepare("
+    SELECT * FROM members 
+    WHERE LOWER(name) LIKE LOWER(:query) 
+       OR LOWER(email) LIKE LOWER(:query) 
+       OR phone LIKE :query 
+       OR CAST(id AS CHAR) LIKE :query
+    ORDER BY id DESC
+");
+$stmtMember->execute([':query' => $searchTerm]);
+$members = $stmtMember->fetchAll(PDO::FETCH_ASSOC);
+$stmtBorrow = $conn->prepare("
+    SELECT br.*, m.name AS student_name, m.profile_image, bk.title AS book_title 
+    FROM borrowings br 
+    JOIN members m ON br.member_id = m.id 
+    JOIN books bk ON br.book_id = bk.id 
+    WHERE LOWER(m.name) LIKE LOWER(:query) 
+       OR LOWER(bk.title) LIKE LOWER(:query) 
+       OR CAST(br.id AS CHAR) LIKE :query
+    ORDER BY br.id DESC
+");
+$stmtBorrow->execute([':query' => $searchTerm]);
+$borrowings = $stmtBorrow->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
     echo json_encode([
