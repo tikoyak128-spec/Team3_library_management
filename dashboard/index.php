@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Database/db.php'; // Establishes PDO connection
 
 // Ensure both $conn and $pdo aliases exist so queries never fail
 if (!isset($conn) && isset($pdo)) { $conn = $pdo; }
-if (!isset($pdo) && isset($conn)) { $pdo = $conn; }
+if (!isset($pdo) && isset($conn)) { $conn = $conn; }
 
 // 2. Hook up page-specific styles BEFORE header
 $page_styles = ['Assets/css/dashboard.css'];
@@ -24,17 +24,17 @@ try {
     $stmt = $conn->query("SELECT COUNT(*) FROM books WHERE status = 'available'");
     $books_available = $stmt->fetchColumn();
 
-    $stmt = $conn->query("SELECT COUNT(*) FROM borrowings WHERE status = 'issued' OR status = 'Issued'");
+    $stmt = $conn->query("SELECT COUNT(*) FROM borrowings WHERE LOWER(status) = 'issued'");
     $books_issued = $stmt->fetchColumn();
 
-    $stmt = $conn->query("SELECT COUNT(*) FROM borrowings WHERE status = 'returned' OR status = 'Returned'");
+    $stmt = $conn->query("SELECT COUNT(*) FROM borrowings WHERE LOWER(status) = 'returned'");
     $books_due = $stmt->fetchColumn();
 
-    // 1. Returned Books
-    $returnedQuery = "SELECT b.*, m.name AS student_name, m.email AS student_email, m.phone AS student_phone, m.profile_image 
+    // 1. Returned Books Joined with Members
+    $returnedQuery = "SELECT b.id AS borrow_id, b.*, m.name AS student_name, m.email AS student_email, m.phone AS student_phone, m.profile_image 
                       FROM borrowings b 
                       JOIN members m ON b.member_id = m.id 
-                      WHERE b.status = 'returned' OR b.status = 'Returned'
+                      WHERE LOWER(b.status) = 'returned'
                       ORDER BY b.id DESC LIMIT 5";
     $stmt = $conn->query($returnedQuery);
     $returned_books = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -43,16 +43,17 @@ try {
     $stmt = $conn->query("SELECT * FROM members ORDER BY id DESC LIMIT 5");
     $student_profiles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // 3. Borrow History
-    $borrowQuery = "SELECT b.*, m.name AS student_name, m.profile_image, bk.title AS book_name 
+    // 3. Borrow History (Filtered strictly to show ONLY issued books)
+    $borrowQuery = "SELECT b.id AS borrow_id, b.*, m.name AS student_name, m.profile_image, bk.title AS book_name 
                     FROM borrowings b 
                     JOIN members m ON b.member_id = m.id 
                     JOIN books bk ON b.book_id = bk.id 
+                    WHERE LOWER(b.status) = 'issued'
                     ORDER BY b.id DESC";
     $stmt = $conn->query($borrowQuery);
     $borrow_history = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // 4. Wishlist Books (Fetches all books for cover upload select dropdown)
+    // 4. Wishlist Books
     $wishlistQuery = "SELECT bk.*, a.name AS author_name 
                       FROM books bk 
                       LEFT JOIN authors a ON bk.author_id = a.id 
@@ -71,7 +72,76 @@ try {
 ?>
 
 <style>
-/* Modal & Cover Upload Overlay Styles */
+/* Dashboard Specific Enhancements */
+.card-header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.table-student-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.table-student-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.student-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.student-meta .name {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #1e293b;
+    line-height: 1.2;
+}
+
+.student-meta .phone {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+/* Custom Status Badges */
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-status.returned {
+    background-color: #ecfdf5;
+    color: #10b981;
+}
+
+.badge-status.returned i {
+    font-size: 0.7rem;
+}
+
+.action-btn-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+/* Modal Styles */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -109,7 +179,7 @@ try {
 <!-- Top Headline Greeting Row -->
 <div class="dashboard-header-block">
     <h1>Welcome to Library Management</h1>
-    <p>A new book can be added to your library. <a href="<?php echo BASE_URL; ?>Books/create.php">add here</a></p>
+    <p>A new book can be added to your library. <a href="<?php echo BASE_URL; ?>books/create.php">add here</a></p>
 </div>
 
 <!-- Four-Column Core Analytics Highlights Grid -->
@@ -163,15 +233,18 @@ try {
             <!-- 1. Book Returned Card Table -->
             <div class="dashboard-card">
                 <div class="card-header">
-                    <h3>Book Returned</h3>
-                    <a href="<?php echo BASE_URL; ?>Borrow/index.php" class="link-view-all">View All</a>
+                    <h3 class="card-header-title">
+                        <i class="fa-solid fa-rotate-left" style="color: #6366f1;"></i> Book Returned
+                    </h3>
+                    <a href="<?php echo BASE_URL; ?>borrow/index.php" class="link-view-all">View All</a>
                 </div>
+
                 <table class="dashboard-table">
                     <thead>
                         <tr>
-                            <th>Students</th>
-                            <th>Status</th>
-                            <th style="text-align: right;">Actions</th>
+                            <th>STUDENT</th>
+                            <th>STATUS</th>
+                            <th style="text-align: right;">ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -184,23 +257,37 @@ try {
                         <?php else: ?>
                             <?php foreach ($returned_books as $ret): 
                                 $imgValue = $ret['profile_image'] ?? '';
-                                $studentImg = !empty($imgValue) ? (filter_var($imgValue, FILTER_VALIDATE_URL) ? $imgValue : BASE_URL . 'Assets/images/' . htmlspecialchars($imgValue)) : BASE_URL . 'Assets/images/user-placeholder.jpg';
+                                $studentImg = !empty($imgValue) 
+                                    ? (filter_var($imgValue, FILTER_VALIDATE_URL) ? $imgValue : BASE_URL . 'Assets/images/' . htmlspecialchars($imgValue)) 
+                                    : BASE_URL . 'Assets/images/user-placeholder.jpg';
                             ?>
                             <tr>
-                                <td class="table-profile-cell">
-                                    <img src="<?php echo htmlspecialchars($studentImg); ?>" alt="Profile">
-                                    <span><?php echo htmlspecialchars($ret['student_name']); ?></span>
+                                <td class="table-student-cell">
+                                    <img src="<?php echo htmlspecialchars($studentImg); ?>" alt="Profile" class="table-student-avatar">
+                                    <div class="student-meta">
+                                        <span class="name"><?php echo htmlspecialchars($ret['student_name']); ?></span>
+                                        <?php if(!empty($ret['student_phone'])): ?>
+                                            <span class="phone"><i class="fa-solid fa-phone" style="font-size: 10px;"></i> <?php echo htmlspecialchars($ret['student_phone']); ?></span>
+                                        <?php endif; ?>
+                                    </div>
                                 </td>
                                 <td>
-                                    <span style="font-size: 13px; display: block; font-weight: 500;"><?php echo htmlspecialchars($ret['status'] ?? 'N/A'); ?></span>
-                                    <span style="font-size: 11px; color: var(--text-muted);"><?php echo htmlspecialchars($ret['student_phone'] ?? ''); ?></span>
+                                    <span class="badge-status returned">
+                                        <i class="fa-solid fa-check"></i> <?php echo ucfirst(htmlspecialchars($ret['status'] ?? 'Returned')); ?>
+                                    </span>
                                 </td>
                                 <td style="text-align: right;">
-                                    <a href="<?php echo BASE_URL; ?>Borrow/edit.php?id=<?php echo $ret['id']; ?>" class="btn-table-action" title="Edit Entry"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <form action="<?php echo BASE_URL; ?>Borrow/delete.php" method="POST" style="display:inline;">
-                                        <input type="hidden" name="id" value="<?php echo $ret['id']; ?>">
-                                        <button type="submit" class="btn-table-action btn-delete" data-item="return record" title="Delete Entry"><i class="fa-solid fa-trash-can"></i></button>
-                                    </form>
+                                    <div class="action-btn-group">
+                                        <!-- FIXED: Updated target to borrow/edit.php -->
+                                        
+                                        <!-- Delete Action -->
+                                        <form action="<?php echo BASE_URL; ?>members/delete.php" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this return record?');">
+                                            <input type="hidden" name="id" value="<?php echo $ret['id']; ?>">
+                                            <button type="submit" class="btn-table-action btn-delete" title="Delete Record">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -213,14 +300,14 @@ try {
             <div class="dashboard-card">
                 <div class="card-header">
                     <h3>Student Profile</h3>
-                    <a href="<?php echo BASE_URL; ?>Members/index.php" class="link-view-all">View All</a>
+                    <a href="<?php echo BASE_URL; ?>members/index.php" class="link-view-all">View All</a>
                 </div>
                 <table class="dashboard-table">
                     <thead>
                         <tr>
-                            <th>Students</th>
-                            <th>Status</th>
-                            <th style="text-align: right;">Actions</th>
+                            <th>STUDENTS</th>
+                            <th>STATUS</th>
+                            <th style="text-align: right;">ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -243,11 +330,13 @@ try {
                                 </td>
                                 <td><span class="badge <?php echo ($statusValue === 'approved') ? 'approved' : 'pending'; ?>"><?php echo ucfirst(htmlspecialchars($statusValue)); ?></span></td>
                                 <td style="text-align: right;">
-                                    <a href="<?php echo BASE_URL; ?>Members/edit.php?id=<?php echo $student['id']; ?>" class="btn-table-action" title="Edit Student"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <form action="<?php echo BASE_URL; ?>Members/delete.php" method="POST" style="display:inline;">
-                                        <input type="hidden" name="id" value="<?php echo $student['id']; ?>">
-                                        <button type="submit" class="btn-table-action btn-delete" data-item="student" title="Delete Student"><i class="fa-solid fa-trash-can"></i></button>
-                                    </form>
+                                    <div class="action-btn-group">
+                                        <a href="<?php echo BASE_URL; ?>members/edit.php?id=<?php echo $student['id']; ?>" class="btn-table-action" title="Edit Student"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <form action="<?php echo BASE_URL; ?>members/delete.php" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this student?');">
+                                            <input type="hidden" name="id" value="<?php echo $student['id']; ?>">
+                                            <button type="submit" class="btn-table-action btn-delete" title="Delete Student"><i class="fa-solid fa-trash-can"></i></button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -261,26 +350,26 @@ try {
         <div class="dashboard-card" style="margin-top: 24px;">
             <div class="card-header">
                 <h3>Book Issued</h3>
-                <a href="<?php echo BASE_URL; ?>Borrow/index.php" class="link-view-all">View All</a>
+                <a href="<?php echo BASE_URL; ?>borrow/index.php" class="link-view-all">View All</a>
             </div>
             
             <div class="table-scroll-wrapper" style="max-height: 280px; overflow-y: auto; overflow-x: auto;">
                 <table class="dashboard-table">
                     <thead style="position: sticky; top: 0; background-color: var(--bg-card, #ffffff); z-index: 2;">
                         <tr>
-                            <th>No.</th>
-                            <th>Student name</th>
-                            <th>Book name</th>
-                            <th>Issued date</th>
-                            <th>Status</th>
-                            <th style="text-align: center;">Actions</th>
+                            <th>NO.</th>
+                            <th>STUDENT NAME</th>
+                            <th>BOOK NAME</th>
+                            <th>ISSUED DATE</th>
+                            <th>STATUS</th>
+                            <th style="text-align: center;">ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($borrow_history)): ?>
                             <tr>
                                 <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 25px;">
-                                    <i class="fa-solid fa-circle-info" style="margin-right: 5px;"></i> No issue or transaction logs available.
+                                    <i class="fa-solid fa-circle-info" style="margin-right: 5px;"></i> No active issued books found.
                                 </td>
                             </tr>
                         <?php else: ?>
@@ -296,13 +385,15 @@ try {
                                 </td>
                                 <td><strong><?php echo htmlspecialchars($history['book_name']); ?></strong></td>
                                 <td><?php echo date('M d, Y', strtotime($history['borrow_date'])); ?></td>
-                                <td><span class="badge <?php echo (strtolower($history['status']) === 'returned') ? 'paid' : 'pending'; ?>"><?php echo ucfirst(htmlspecialchars($history['status'])); ?></span></td>
+                                <td><span class="badge paid"><?php echo ucfirst(htmlspecialchars($history['status'])); ?></span></td>
                                 <td style="text-align: center;">
-                                    <a href="<?php echo BASE_URL; ?>Borrow/edit.php?id=<?php echo $history['id']; ?>" class="btn-table-action" title="Edit Transaction"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <form action="<?php echo BASE_URL; ?>Borrow/delete.php" method="POST" style="display:inline;">
-                                        <input type="hidden" name="id" value="<?php echo $history['id']; ?>">
-                                        <button type="submit" class="btn-table-action btn-delete" data-item="borrow entry" title="Delete Entry"><i class="fa-solid fa-trash-can"></i></button>
-                                    </form>
+                                    <div class="action-btn-group" style="justify-content: center;">
+                                       
+                                        <form action="<?php echo BASE_URL; ?>members/delete.php" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this entry?');">
+                                            <input type="hidden" name="id" value="<?php echo $history['id']; ?>">
+                                            <button type="submit" class="btn-table-action btn-delete" title="Delete Entry"><i class="fa-solid fa-trash-can"></i></button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -320,7 +411,6 @@ try {
                 <i class="fa-solid fa-bookmark"></i> Wishlist
             </button>
             
-            <!-- Upload Cover Image Trigger Button -->
             <button onclick="document.getElementById('uploadModal').classList.add('active')" class="btn" style="background: #6366f1; color: #fff; border-radius: 8px; border: none; padding: 0.5rem 0.8rem; cursor: pointer;" title="Upload Book Cover">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
             </button>
@@ -342,10 +432,10 @@ try {
                         <h4><?php echo htmlspecialchars($book['title']); ?></h4>
                         <p><?php echo htmlspecialchars($authorName) . ', ' . htmlspecialchars($publishYear); ?></p>
                         <div style="margin-top: 4px; display: flex; gap: 8px;">
-                            <a href="<?php echo BASE_URL; ?>Books/edit.php?id=<?php echo $book['id']; ?>" style="font-size: 11px; color: var(--text-muted); text-decoration: none;" title="Edit Book"><i class="fa-solid fa-pen"></i></a>
-                            <form action="<?php echo BASE_URL; ?>Books/delete.php" method="POST" style="display:inline;">
+                            <a href="<?php echo BASE_URL; ?>books/edit.php?id=<?php echo $book['id']; ?>" style="font-size: 11px; color: var(--text-muted); text-decoration: none;" title="Edit Book"><i class="fa-solid fa-pen"></i></a>
+                            <form action="<?php echo BASE_URL; ?>books/delete.php" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this book?');">
                                 <input type="hidden" name="id" value="<?php echo $book['id']; ?>">
-                                <button type="submit" class="btn-delete" data-item="wishlist book" style="background:none; border:none; font-size:11px; color:var(--text-muted); cursor:pointer;" title="Delete Book"><i class="fa-solid fa-trash"></i></button>
+                                <button type="submit" class="btn-delete" style="background:none; border:none; font-size:11px; color:var(--text-muted); cursor:pointer;" title="Delete Book"><i class="fa-solid fa-trash"></i></button>
                             </form>
                         </div>
                     </div>
@@ -363,7 +453,7 @@ try {
             <h3>Upload Book Cover Image</h3>
             <button class="btn-close-modal" onclick="document.getElementById('uploadModal').classList.remove('active')">&times;</button>
         </div>
-        <form action="<?php echo BASE_URL; ?>Books/upload_cover.php" method="POST" enctype="multipart/form-data">
+        <form action="<?php echo BASE_URL; ?>books/upload_cover.php" method="POST" enctype="multipart/form-data">
             <div class="upload-form-group">
                 <label for="book_id">Select Book</label>
                 <select name="book_id" id="book_id" required>

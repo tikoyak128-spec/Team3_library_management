@@ -22,38 +22,55 @@ $books = [];
 $members = [];
 $borrowings = [];
 
+function highlightKeywords($text, $search) {
+    if (empty($search)) {
+        return htmlspecialchars($text);
+    }
+    $safeText = htmlspecialchars($text);
+    $safeSearch = preg_quote(htmlspecialchars($search), '/');
+    return preg_replace("/(" . $safeSearch . ")/i", '<mark class="search-highlight">$1</mark>', $safeText);
+}
+
 if (!empty($query)) {
     $searchTerm = "%{$query}%";
 
     try {
-        // Query Books with Author names
+        // Query Books (Title, Author, Category, or ID)
         $stmtBook = $conn->prepare("
             SELECT b.*, a.name AS author_name, c.name AS category_name 
             FROM books b 
             LEFT JOIN authors a ON b.author_id = a.id 
             LEFT JOIN categories c ON b.category_id = c.id 
-            WHERE b.title LIKE :query OR a.name LIKE :query 
+            WHERE LOWER(b.title) LIKE LOWER(:query) 
+               OR LOWER(a.name) LIKE LOWER(:query) 
+               OR LOWER(c.name) LIKE LOWER(:query)
+               OR CAST(b.id AS CHAR) LIKE :query
             ORDER BY b.id DESC
         ");
         $stmtBook->execute([':query' => $searchTerm]);
         $books = $stmtBook->fetchAll(PDO::FETCH_ASSOC);
 
-        // Query Members/Students
+        // Query Members
         $stmtMember = $conn->prepare("
             SELECT * FROM members 
-            WHERE name LIKE :query OR email LIKE :query OR phone LIKE :query 
+            WHERE LOWER(name) LIKE LOWER(:query) 
+               OR LOWER(email) LIKE LOWER(:query) 
+               OR phone LIKE :query 
+               OR CAST(id AS CHAR) LIKE :query
             ORDER BY id DESC
         ");
         $stmtMember->execute([':query' => $searchTerm]);
         $members = $stmtMember->fetchAll(PDO::FETCH_ASSOC);
 
-        // Query Borrowing Transactions
+        // Query Borrowings
         $stmtBorrow = $conn->prepare("
-            SELECT br.*, m.name AS student_name, m.profile_image, bk.title AS book_title 
+            SELECT br.*, m.name AS student_name, bk.title AS book_title 
             FROM borrowings br 
             JOIN members m ON br.member_id = m.id 
             JOIN books bk ON br.book_id = bk.id 
-            WHERE m.name LIKE :query OR bk.title LIKE :query 
+            WHERE LOWER(m.name) LIKE LOWER(:query) 
+               OR LOWER(bk.title) LIKE LOWER(:query) 
+               OR CAST(br.id AS CHAR) LIKE :query
             ORDER BY br.id DESC
         ");
         $stmtBorrow->execute([':query' => $searchTerm]);
@@ -65,137 +82,158 @@ if (!empty($query)) {
 }
 ?>
 
-<!-- Header Banner -->
-<div class="dashboard-header-block">
-    <h1>Search Results</h1>
-    <p>
-        <?php if (!empty($query)): ?>
-            Showing matching results for "<strong><?php echo htmlspecialchars($query); ?></strong>"
-        <?php else: ?>
-            Please enter a keyword in the search bar above.
-        <?php endif; ?>
-    </p>
-</div>
+<!-- Custom CSS for Centering Search Results -->
+<style>
+.search-container {
+    max-width: 800px;
+    margin: 30px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
-<div class="dashboard-content-layout" style="display: flex; flex-direction: column; gap: 24px;">
+.search-bar-card {
+    width: 100%;
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+    text-align: center;
+}
 
-    <!-- SECTION 1: BOOKS RESULTS -->
-    <div class="dashboard-card">
-        <div class="card-header">
-            <h3><i class="fa-solid fa-book" style="margin-right: 8px; color: var(--primary-color, #6366f1);"></i> Matching Books (<?php echo count($books); ?>)</h3>
-            <a href="<?php echo BASE_URL; ?>Books/index.php" class="link-view-all">Manage Books</a>
-        </div>
-        <table class="dashboard-table">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                    <th style="text-align: right;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($books)): ?>
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 18px;">No books found.</td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($books as $b): ?>
-                        <tr>
-                            <td><strong><?php echo htmlspecialchars($b['title']); ?></strong></td>
-                            <td><?php echo htmlspecialchars($b['author_name'] ?? 'N/A'); ?></td>
-                            <td><?php echo htmlspecialchars($b['category_name'] ?? 'Uncategorized'); ?></td>
-                            <td><span class="badge <?php echo ($b['status'] === 'available') ? 'approved' : 'pending'; ?>"><?php echo ucfirst(htmlspecialchars($b['status'])); ?></span></td>
-                            <td style="text-align: right;">
-                                <a href="<?php echo BASE_URL; ?>Books/edit.php?id=<?php echo $b['id']; ?>" class="btn-table-action" title="Edit Book"><i class="fa-solid fa-pen-to-square"></i></a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
+.search-form {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.search-input {
+    width: 70%;
+    padding: 12px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+}
+
+.btn-search {
+    padding: 12px 24px;
+    background: var(--primary-color, #6366f1);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.result-card {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 5px solid #cbd5e1;
+}
+
+.result-card.available {
+    border-left-color: #10b981; /* Green highlight for available */
+}
+
+.result-card.unavailable {
+    border-left-color: #f59e0b; /* Yellow highlight for unavailable */
+}
+
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-badge.available {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.unavailable {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+</style>
+
+<!-- MAIN CONTAINER CENTERED IN SCREEN -->
+<div class="search-container">
+
+    <!-- Search Form Block -->
+    <div class="search-bar-card">
+        <h2>Search Library</h2>
+        <p style="color: #64748b; font-size: 14px;">Find available books, members, or borrow history</p>
+        
+        <form action="" method="GET" class="search-form">
+            <input 
+                type="text" 
+                name="q" 
+                class="search-input"
+                value="<?php echo htmlspecialchars($query); ?>" 
+                placeholder="Type book title, author, or category..." 
+                required
+            >
+            <button type="submit" class="btn-search">
+                <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
+        </form>
     </div>
 
-    <!-- SECTION 2: MEMBERS / STUDENTS RESULTS -->
-    <div class="dashboard-card">
-        <div class="card-header">
-            <h3><i class="fa-solid fa-users" style="margin-right: 8px; color: var(--primary-color, #6366f1);"></i> Matching Members (<?php echo count($members); ?>)</h3>
-            <a href="<?php echo BASE_URL; ?>Members/index.php" class="link-view-all">Manage Members</a>
-        </div>
-        <table class="dashboard-table">
-            <thead>
-                <tr>
-                    <th>Member</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th style="text-align: right;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($members)): ?>
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 18px;">No members found.</td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($members as $m): 
-                        $imgValue = $m['profile_image'] ?? '';
-                        $userImg = !empty($imgValue) ? (filter_var($imgValue, FILTER_VALIDATE_URL) ? $imgValue : BASE_URL . 'Assets/images/' . htmlspecialchars($imgValue)) : BASE_URL . 'Assets/images/user-placeholder.jpg';
-                    ?>
-                        <tr>
-                            <td class="table-profile-cell">
-                                <img src="<?php echo htmlspecialchars($userImg); ?>" alt="Profile">
-                                <span><?php echo htmlspecialchars($m['name']); ?></span>
-                            </td>
-                            <td><?php echo htmlspecialchars($m['email'] ?? 'N/A'); ?></td>
-                            <td><?php echo htmlspecialchars($m['phone'] ?? 'N/A'); ?></td>
-                            <td style="text-align: right;">
-                                <a href="<?php echo BASE_URL; ?>Members/edit.php?id=<?php echo $m['id']; ?>" class="btn-table-action" title="Edit Member"><i class="fa-solid fa-pen-to-square"></i></a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
+    <!-- SEARCH RESULTS SECTION -->
+    <?php if (!empty($query)): ?>
 
-    <!-- SECTION 3: BORROWING LOGS RESULTS -->
-    <div class="dashboard-card">
-        <div class="card-header">
-            <h3><i class="fa-solid fa-right-left" style="margin-right: 8px; color: var(--primary-color, #6366f1);"></i> Matching Borrow Log Records (<?php echo count($borrowings); ?>)</h3>
-            <a href="<?php echo BASE_URL; ?>Borrow/index.php" class="link-view-all">Manage Borrowings</a>
+        <div style="width: 100%;">
+            <h3 style="margin-bottom: 16px; color: #334155;">
+                <i class="fa-solid fa-book" style="color: var(--primary-color, #6366f1); margin-right: 8px;"></i>
+                Available Books (<?php echo count($books); ?>)
+            </h3>
+
+            <?php if (empty($books)): ?>
+                <div class="result-card" style="justify-content: center; color: #64748b;">
+                    No matching books found for "<strong><?php echo htmlspecialchars($query); ?></strong>".
+                </div>
+            <?php else: ?>
+                <?php foreach ($books as $b): 
+                    $isAvailable = strtolower($b['status']) === 'available';
+                ?>
+                    <div class="result-card <?php echo $isAvailable ? 'available' : 'unavailable'; ?>">
+                        <div>
+                            <h4 style="font-size: 18px; margin-bottom: 6px;">
+                                <?php echo highlightKeywords($b['title'], $query); ?>
+                            </h4>
+                            <p style="color: #64748b; font-size: 14px; margin: 2px 0;">
+                                <strong>Author:</strong> <?php echo htmlspecialchars($b['author_name'] ?? 'N/A'); ?> | 
+                                <strong>Category:</strong> <?php echo htmlspecialchars($b['category_name'] ?? 'Uncategorized'); ?>
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <span class="status-badge <?php echo $isAvailable ? 'available' : 'unavailable'; ?>">
+                                <?php echo ucfirst(htmlspecialchars($b['status'])); ?>
+                            </span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
-        <table class="dashboard-table">
-            <thead>
-                <tr>
-                    <th>Student Name</th>
-                    <th>Book Title</th>
-                    <th>Borrow Date</th>
-                    <th>Status</th>
-                    <th style="text-align: right;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($borrowings)): ?>
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 18px;">No borrow records found.</td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($borrowings as $br): ?>
-                        <tr>
-                            <td><strong><?php echo htmlspecialchars($br['student_name']); ?></strong></td>
-                            <td><?php echo htmlspecialchars($br['book_title']); ?></td>
-                            <td><?php echo date('M d, Y', strtotime($br['borrow_date'])); ?></td>
-                            <td><span class="badge <?php echo ($br['status'] === 'returned') ? 'paid' : 'pending'; ?>"><?php echo ucfirst(htmlspecialchars($br['status'])); ?></span></td>
-                            <td style="text-align: right;">
-                                <a href="<?php echo BASE_URL; ?>Borrow/edit.php?id=<?php echo $br['id']; ?>" class="btn-table-action" title="Edit Borrow Record"><i class="fa-solid fa-pen-to-square"></i></a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
+
+    <?php endif; ?>
 
 </div>
 
