@@ -36,6 +36,7 @@ $totalMembers = $totalMembersStmt ? $totalMembersStmt->fetchColumn() : 0;
         background-color: var(--bg-surface);
         font-family: 'Plus Jakarta Sans', sans-serif;
         color: var(--text-dark);
+        justify-items: center;
     }
 
     .page-title {

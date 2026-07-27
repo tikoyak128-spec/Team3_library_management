@@ -11,6 +11,9 @@ require __DIR__ . '/../Includes/header.php';
 ?>
 
 <style>
+body{
+    justify-items: center;
+}
 /* Top Header & Action Layout */
 .topbar {
     display: flex;
@@ -170,64 +173,66 @@ require __DIR__ . '/../Includes/header.php';
 }
 </style>
 
-<main class="main-content">
-    <div class="topbar">
-        <div class="topbar-left">
-            <!-- Back to Dashboard Navigation Icon -->
-            <a href="../Dashboard/index.php" class="btn btn-outline" title="Back to Dashboard">
-                <i class="fa-solid fa-house"></i> Dashboard
+<body>
+    <main class="main-content">
+        <div class="topbar">
+            <div class="topbar-left">
+                <!-- Back to Dashboard Navigation Icon -->
+                <a href="../Dashboard/index.php" class="btn btn-outline" title="Back to Dashboard">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
+                <h1 class="page-title">Categories</h1>
+            </div>
+    
+            <a href="create.php" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Add Category
             </a>
-            <h1 class="page-title">Categories</h1>
         </div>
-
-        <a href="create.php" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i> Add Category
-        </a>
-    </div>
-
-    <div class="card">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Books</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($categories as $c): ?>
-                <tr>
-                    <td><span class="cat-badge">C<?= str_pad($c['id'], 3, '0', STR_PAD_LEFT) ?></span></td>
-                    <td><strong><?= htmlspecialchars($c['name']) ?></strong></td>
-                    <td><?= htmlspecialchars($c['description'] ?? '—') ?></td>
-                    <td>
-                        <span class="book-count-badge">
-                            <?= (int)($c['book_count'] ?? 0) ?> books
-                        </span>
-                    </td>
-                    <td>
-                        <div class="actions-cell">
-                            <a class="btn btn-outline btn-sm" href="edit.php?id=<?= $c['id'] ?>">
-                                <i class="fa-solid fa-pen"></i> Edit
-                            </a>
-                            <a class="btn btn-danger btn-sm" href="delete.php?id=<?= $c['id'] ?>" onclick="return confirm('Delete this category?');">
-                                <i class="fa-solid fa-trash"></i> Delete
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-
-                <?php if (!$categories): ?>
-                <tr>
-                    <td colspan="5" class="empty-state">No categories found.</td>
-                </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-</main>
+    
+        <div class="card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Books</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($categories as $c): ?>
+                    <tr>
+                        <td><span class="cat-badge">C<?= str_pad($c['id'], 3, '0', STR_PAD_LEFT) ?></span></td>
+                        <td><strong><?= htmlspecialchars($c['name']) ?></strong></td>
+                        <td><?= htmlspecialchars($c['description'] ?? '—') ?></td>
+                        <td>
+                            <span class="book-count-badge">
+                                <?= (int)($c['book_count'] ?? 0) ?> books
+                            </span>
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                <a class="btn btn-outline btn-sm" href="edit.php?id=<?= $c['id'] ?>">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </a>
+                                <a class="btn btn-danger btn-sm" href="delete.php?id=<?= $c['id'] ?>" onclick="return confirm('Delete this category?');">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+    
+                    <?php if (!$categories): ?>
+                    <tr>
+                        <td colspan="5" class="empty-state">No categories found.</td>
+                    </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
 
 <?php require __DIR__ . '/../Includes/footer.php'; ?>

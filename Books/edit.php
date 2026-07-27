@@ -62,10 +62,7 @@ require __DIR__ . '/../Includes/header.php';
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="form-group">
-                <label>ISBN</label>
-                <input type="text" name="isbn" value="<?= htmlspecialchars($book['isbn'] ?? '') ?>">
-            </div>
+           
             <div class="form-group">
                 <label>Total Copies</label>
                 <input type="number" name="total_copies" value="<?php echo htmlspecialchars($book['total_copies'] ?? $book['quantity'] ?? 1); ?>">

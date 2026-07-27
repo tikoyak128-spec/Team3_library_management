@@ -28,6 +28,12 @@ require_once __DIR__ . '/../Authentication/auth_check.php';
                     <i class="fa-solid fa-book-open"></i> <span>Books Available</span>
                 </a>
             </li>
+             <li class="<?php echo (strpos($_SERVER['REQUEST_URI'], 'authors') !== false) ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>author/index.php">
+                    <i class="fa-solid fa-user-pen"></i> <span>Author</span>
+                </a>
+            </li>
+
             <li class="<?php echo (strpos($_SERVER['REQUEST_URI'], 'Borrow') !== false || strpos($_SERVER['REQUEST_URI'], 'Return') !== false) ? 'active' : ''; ?>">
                 <a href="<?php echo BASE_URL; ?>Borrow/index.php">
                     <i class="fa-solid fa-right-left"></i> <span>Borrowed Books</span>

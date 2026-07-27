@@ -12,6 +12,12 @@ require __DIR__ . '/../Includes/header.php';
 ?>
 
 <style>
+
+
+
+body{
+    justify-items:center;
+}
 /* Header & Navigation Bar */
 .topbar-header {
     display: flex;
@@ -98,6 +104,7 @@ require __DIR__ . '/../Includes/header.php';
     letter-spacing: 0.05em;
     padding: 0.85rem 1rem;
     border-bottom: 2px solid #e2e8f0;
+    vertical-align: middle;
 }
 
 .data-table td {
@@ -116,6 +123,11 @@ require __DIR__ . '/../Includes/header.php';
     border-bottom: none;
 }
 
+/* Alignment Helpers */
+.text-center {
+    text-align: center !important;
+}
+
 /* ID Tag */
 .book-id {
     font-family: monospace;
@@ -125,6 +137,7 @@ require __DIR__ . '/../Includes/header.php';
     padding: 0.2rem 0.4rem;
     border-radius: 6px;
     font-size: 0.85rem;
+    display: inline-block;
 }
 
 /* Status Badges */
@@ -200,8 +213,11 @@ require __DIR__ . '/../Includes/header.php';
     font-size: 0.8rem;
 }
 
+/* Centered Flexbox Container for Actions */
 .actions-cell {
     display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 0.4rem;
 }
 
@@ -213,88 +229,88 @@ require __DIR__ . '/../Includes/header.php';
 }
 </style>
 
-<main class="main-content">
-    <!-- Header Topbar with Back to Dashboard & Action Buttons -->
-    <div class="topbar-header">
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <!-- Back to Dashboard Icon Button -->
-            <a href="../Dashboard/index.php" class="btn btn-outline" title="Back to Dashboard">
-                <i class="fa-solid fa-house"></i> Dashboard
-            </a>
+<body>
+    <main class="main-content">
+        <!-- Header Topbar with Back to Dashboard & Action Buttons -->
+        <div class="topbar-header">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <!-- Back to Dashboard Icon Button -->
+                <a href="../Dashboard/index.php" class="btn btn-outline" title="Back to Dashboard">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
+            </div>
+    
+            <div class="topbar-actions">
+                <!-- Search Form -->
+                <form class="search-box" method="GET" action="index.php">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" name="q" placeholder="Search books..." value="<?= htmlspecialchars($search) ?>">
+                </form>
+    
+                <!-- Add Book Button -->
+                <a href="create.php" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Add Book
+                </a>
+            </div>
         </div>
-
-        <div class="topbar-actions">
-            <!-- Search Form -->
-            <form class="search-box" method="GET" action="index.php">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" name="q" placeholder="Search books..." value="<?= htmlspecialchars($search) ?>">
-            </form>
-
-            <!-- Add Book Button -->
-            <a href="create.php" class="btn btn-primary">
-                <i class="fa-solid fa-plus"></i> Add Book
-            </a>
+    
+        <h1 class="page-title">Books Available</h1>
+        <p class="page-subtitle">Manage your library's book catalogue.</p>
+    
+        <div class="card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th class="text-center">Available</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($books as $b):
+                        $avail = (int)($b['available_copies'] ?? $b['quantity'] ?? 0);
+                        $total = (int)($b['total_copies'] ?? $b['quantity'] ?? 0);
+                    ?>
+                    <tr>
+                        <td class="text-center"><span class="book-id">B<?= str_pad($b['id'], 3, '0', STR_PAD_LEFT) ?></span></td>
+                        <td><strong><?= htmlspecialchars($b['title']) ?></strong></td>
+                        <td><?= htmlspecialchars($b['author_name'] ?? '—') ?></td>
+                        <td><?= htmlspecialchars($b['category_name'] ?? '—') ?></td>
+                        <td class="text-center">
+                            <span class="badge <?= $avail > 0 ? 'approved' : 'overdue' ?>">
+                                <?= $avail ?>
+                            </span>
+                        </td>
+                        <td class="text-center"><?= $total ?></td>
+                        <td class="text-center">
+                            <div class="actions-cell">
+                                <a class="btn btn-outline btn-sm" href="view.php?id=<?= $b['id'] ?>" title="View Details">
+                                    <i class="fa-solid fa-eye"></i> View
+                                </a>
+                                <a class="btn btn-outline btn-sm" href="edit.php?id=<?= $b['id'] ?>" title="Edit Book">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </a>
+                                <a class="btn btn-danger btn-sm" href="delete.php?id=<?= $b['id'] ?>" onclick="return confirm('Delete this book?');" title="Delete Book">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+    
+                    <?php if (!$books): ?>
+                    <tr>
+                        <td colspan="7" class="empty-state">No books found.</td>
+                    </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
-    </div>
-
-    <h1 class="page-title">Books Available</h1>
-    <p class="page-subtitle">Manage your library's book catalogue.</p>
-
-    <div class="card">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Category</th>
-                    <th>ISBN</th>
-                    <th>Available</th>
-                    <th>Total</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($books as $b): 
-                    $avail = (int)($b['available_copies'] ?? $b['quantity'] ?? 0);
-                    $total = (int)($b['total_copies'] ?? $b['quantity'] ?? 0);
-                ?>
-                <tr>
-                    <td><span class="book-id">B<?= str_pad($b['id'], 3, '0', STR_PAD_LEFT) ?></span></td>
-                    <td><strong><?= htmlspecialchars($b['title']) ?></strong></td>
-                    <td><?= htmlspecialchars($b['author_name'] ?? '—') ?></td>
-                    <td><?= htmlspecialchars($b['category_name'] ?? '—') ?></td>
-                    <td><?= htmlspecialchars($b['isbn'] ?? '—') ?></td>
-                    <td>
-                        <span class="badge <?= $avail > 0 ? 'approved' : 'overdue' ?>">
-                            <?= $avail ?>
-                        </span>
-                    </td>
-                    <td><?= $total ?></td>
-                    <td>
-                        <div class="actions-cell">
-                            <a class="btn btn-outline btn-sm" href="view.php?id=<?= $b['id'] ?>" title="View Details">
-                                <i class="fa-solid fa-eye"></i> View
-                            </a>
-                            <a class="btn btn-outline btn-sm" href="edit.php?id=<?= $b['id'] ?>" title="Edit Book">
-                                <i class="fa-solid fa-pen"></i> Edit
-                            </a>
-                            <a class="btn btn-danger btn-sm" href="delete.php?id=<?= $b['id'] ?>" onclick="return confirm('Delete this book?');" title="Delete Book">
-                                <i class="fa-solid fa-trash"></i> Delete
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-
-                <?php if (!$books): ?>
-                <tr>
-                    <td colspan="8" class="empty-state">No books found.</td>
-                </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-</main>
+    </main>
+</body>
 
 <?php require __DIR__ . '/../Includes/footer.php'; ?>
