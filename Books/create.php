@@ -59,10 +59,7 @@ require __DIR__ . '/../Includes/header.php';
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="form-group">
-                <label>ISBN</label>
-                <input type="text" name="isbn" value="<?= htmlspecialchars($_POST['isbn'] ?? '') ?>">
-            </div>
+           
             <div class="form-group">
                 <label>Total Copies</label>
                 <input type="number" name="total_copies" min="1" value="<?= htmlspecialchars($_POST['total_copies'] ?? 1) ?>">

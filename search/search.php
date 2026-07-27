@@ -178,7 +178,7 @@ if (!empty($query)) {
     <!-- Search Form Block -->
     <div class="search-bar-card">
         <h2>Search Library</h2>
-        <p style="color: #64748b; font-size: 14px;">Find available books, members, or borrow history</p>
+        <p style="color: #64748b; font-size: 14px;">Find available books only</p>
         
         <form action="" method="GET" class="search-form">
             <input 
